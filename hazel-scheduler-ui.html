@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazel Health - Appointment Scheduler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f8;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #5B3CC4 0%, #7C5CE7 100%);
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(91, 60, 196, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #5B3CC4;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 24px;
+        }
+
+        .header-nav a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .header-nav a:hover, .header-nav a.active {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .form-section h1 {
+            font-size: 24px;
+            color: #5B3CC4;
+            margin-bottom: 8px;
+        }
+
+        .form-section .subtitle {
+            color: #666;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #7C5CE7;
+            box-shadow: 0 0 0 3px rgba(124, 92, 231, 0.15);
+        }
+
+        .section-divider {
+            grid-column: span 2;
+            border-top: 1px solid #eee;
+            margin: 12px 0;
+            padding-top: 20px;
+        }
+
+        .section-divider h3 {
+            font-size: 14px;
+            color: #5B3CC4;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .submit-btn {
+            grid-column: span 2;
+            background: linear-gradient(135deg, #5B3CC4 0%, #7C5CE7 100%);
+            color: white;
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(91, 60, 196, 0.35);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .webhook-config {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .webhook-config h3 {
+            font-size: 14px;
+            color: #5B3CC4;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .webhook-config input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .webhook-config input:focus {
+            outline: none;
+            border-color: #7C5CE7;
+            box-shadow: 0 0 0 3px rgba(124, 92, 231, 0.15);
+        }
+
+        .webhook-config .hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Status Panel */
+        .status-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+
+        .status-panel h3 {
+            font-size: 14px;
+            color: #5B3CC4;
+            margin-bottom: 16px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f8fc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+
+        .status-dot.pending { background: #f59e0b; animation: pulse 1s infinite; }
+        .status-dot.success { background: #10b981; }
+        .status-dot.error { background: #ef4444; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-item span {
+            font-size: 13px;
+            color: #555;
+        }
+
+        /* Response Panel */
+        .response-panel {
+            background: linear-gradient(135deg, #2D2450 0%, #1a1a2e 100%);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            flex-grow: 1;
+        }
+
+        .response-panel h3 {
+            font-size: 14px;
+            color: #A78BFA;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .response-content {
+            background: #0d0d1a;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 11px;
+            color: #a0a0a0;
+            overflow-x: auto;
+            min-height: 150px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .response-content.success {
+            color: #A78BFA;
+        }
+
+        .response-content.error {
+            color: #f87171;
+        }
+
+        /* Demo Badge */
+        .demo-badge {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Agent Flow Indicator */
+        .flow-indicator {
+            background: linear-gradient(135deg, #EDE9FE 0%, #F3E8FF 100%);
+            border: 1px solid #DDD6FE;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .flow-indicator h4 {
+            font-size: 12px;
+            color: #5B3CC4;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .flow-steps {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #7C5CE7;
+        }
+
+        .flow-steps .arrow {
+            color: #C4B5FD;
+        }
+
+        .flow-step {
+            background: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #DDD6FE;
+        }
+
+        .flow-step.active {
+            background: #5B3CC4;
+            color: white;
+            border-color: #5B3CC4;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-badge">🔧 DEMO MODE</div>
+    
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">H</div>
+            <span class="logo-text">Hazel Health</span>
+        </div>
+        <nav class="header-nav">
+            <a href="#">Dashboard</a>
+            <a href="#" class="active">Schedule Visit</a>
+            <a href="#">Students</a>
+            <a href="#">Reports</a>
+        </nav>
+    </header>
+
+    <main class="main">
+        <section class="form-section">
+            <h1>Schedule a Student Visit</h1>
+            <p class="subtitle">Enter student and insurance information to schedule a telehealth appointment</p>
+            
+            <form id="appointmentForm" class="form-grid">
+                <!-- Student Information -->
+                <div class="form-group">
+                    <label>Student First Name *</label>
+                    <input type="text" id="studentFirstName" value="Emma" required>
+                </div>
+                <div class="form-group">
+                    <label>Student Last Name *</label>
+                    <input type="text" id="studentLastName" value="Johnson" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" id="studentDOB" value="2012-03-15" required>
+                </div>
+                <div class="form-group">
+                    <label>School District *</label>
+                    <select id="schoolDistrict" required>
+                        <option value="oakland-usd">Oakland USD</option>
+                        <option value="sf-unified">San Francisco Unified</option>
+                        <option value="la-unified">Los Angeles Unified</option>
+                        <option value="miami-dade">Miami-Dade County</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Appointment Type *</label>
+                    <select id="appointmentType" required>
+                        <option value="mental_health">Mental Health</option>
+                        <option value="physical_health">Physical Health</option>
+                        <option value="follow_up">Follow-up Visit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Requested Date *</label>
+                    <input type="date" id="appointmentDate" required>
+                </div>
+
+                <!-- Insurance Section -->
+                <div class="section-divider">
+                    <h3>📋 Insurance Information</h3>
+                </div>
+                
+                <div class="form-group">
+                    <label>Insurance Provider *</label>
+                    <select id="insuranceProvider" required>
+                        <option value="bcbs">Blue Cross Blue Shield</option>
+                        <option value="united">UnitedHealthcare</option>
+                        <option value="aetna">Aetna</option>
+                        <option value="cigna">Cigna</option>
+                        <option value="kaiser">Kaiser Permanente</option>
+                        <option value="medicaid">Medicaid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Plan Type</label>
+                    <select id="planType">
+                        <option value="ppo">PPO</option>
+                        <option value="hmo">HMO</option>
+                        <option value="epo">EPO</option>
+                        <option value="pos">POS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Subscriber Name (Parent/Guardian) *</label>
+                    <input type="text" id="subscriberName" value="Michael Johnson" required>
+                </div>
+                <div class="form-group">
+                    <label>Subscriber DOB *</label>
+                    <input type="date" id="subscriberDOB" value="1980-07-22" required>
+                </div>
+                <div class="form-group">
+                    <label>Member ID *</label>
+                    <input type="text" id="memberId" value="XYZ123456789" required>
+                </div>
+                <div class="form-group">
+                    <label>Group Number</label>
+                    <input type="text" id="groupNumber" value="GRP8899">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    📅 Schedule & Check Eligibility
+                </button>
+            </form>
+        </section>
+
+        <aside class="sidebar">
+            <div class="flow-indicator">
+                <h4>🤖 Agent Workflow</h4>
+                <div class="flow-steps">
+                    <span class="flow-step" id="flow1">Form</span>
+                    <span class="arrow">→</span>
+                    <span class="flow-step" id="flow2">Agent</span>
+                    <span class="arrow">→</span>
+                    <span class="flow-step" id="flow3">Payer API</span>
+                    <span class="arrow">→</span>
+                    <span class="flow-step" id="flow4">Result</span>
+                </div>
+            </div>
+
+            <div class="webhook-config">
+                <h3>⚡ Agent Webhook URL</h3>
+                <input type="text" id="webhookUrl" placeholder="Paste your n8n webhook URL here...">
+                <p class="hint">Paste your n8n Test URL here to connect the form to your agent</p>
+            </div>
+
+            <div class="status-panel">
+                <h3>📊 Request Status</h3>
+                <div class="status-item">
+                    <div class="status-dot" id="status1"></div>
+                    <span>Form submitted</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" id="status2"></div>
+                    <span>Sent to agent</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-dot" id="status3"></div>
+                    <span>Agent response received</span>
+                </div>
+            </div>
+
+            <div class="response-panel">
+                <h3>💻 Agent Response</h3>
+                <div class="response-content" id="responseContent">
+// Response will appear here after submitting...
+
+// This shows what your n8n agent returns
+// after processing the eligibility check
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script>
+        // Set today's date as default for appointment
+        document.getElementById('appointmentDate').valueAsDate = new Date();
+
+        // Reset status dots
+        function resetStatus() {
+            document.getElementById('status1').className = 'status-dot';
+            document.getElementById('status2').className = 'status-dot';
+            document.getElementById('status3').className = 'status-dot';
+            document.getElementById('flow1').className = 'flow-step';
+            document.getElementById('flow2').className = 'flow-step';
+            document.getElementById('flow3').className = 'flow-step';
+            document.getElementById('flow4').className = 'flow-step';
+        }
+
+        // Update status
+        function setStatus(num, state) {
+            document.getElementById('status' + num).className = 'status-dot ' + state;
+        }
+
+        // Update flow
+        function setFlow(num) {
+            document.getElementById('flow' + num).className = 'flow-step active';
+        }
+
+        // Form submission
+        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            if (!webhookUrl) {
+                alert('Please paste your n8n webhook URL first!');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const responseContent = document.getElementById('responseContent');
+            
+            // Reset and start
+            resetStatus();
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Processing...';
+            responseContent.className = 'response-content';
+            
+            // Build payload
+            const payload = {
+                event: "appointment.created",
+                timestamp: new Date().toISOString(),
+                appointmentId: "APT-" + Date.now(),
+                student: {
+                    firstName: document.getElementById('studentFirstName').value,
+                    lastName: document.getElementById('studentLastName').value,
+                    dateOfBirth: document.getElementById('studentDOB').value,
+                    schoolDistrict: document.getElementById('schoolDistrict').value
+                },
+                appointment: {
+                    type: document.getElementById('appointmentType').value,
+                    requestedDate: document.getElementById('appointmentDate').value
+                },
+                insurance: {
+                    provider: document.getElementById('insuranceProvider').value,
+                    planType: document.getElementById('planType').value,
+                    subscriberName: document.getElementById('subscriberName').value,
+                    subscriberDOB: document.getElementById('subscriberDOB').value,
+                    memberId: document.getElementById('memberId').value,
+                    groupNumber: document.getElementById('groupNumber').value
+                }
+            };
+
+            // Status 1: Form submitted
+            setStatus(1, 'success');
+            setFlow(1);
+            responseContent.textContent = '// Payload sent to agent:\n' + JSON.stringify(payload, null, 2);
+
+            try {
+                // Status 2: Sending to agent
+                await new Promise(r => setTimeout(r, 300));
+                setStatus(2, 'pending');
+                setFlow(2);
+                
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                setStatus(2, 'success');
+                setFlow(3);
+                setStatus(3, 'pending');
+
+                const result = await response.text();
+                let displayResult;
+                
+                try {
+                    displayResult = JSON.stringify(JSON.parse(result), null, 2);
+                } catch {
+                    displayResult = result;
+                }
+
+                setStatus(3, 'success');
+                setFlow(4);
+                responseContent.textContent = '// Agent Response:\n' + displayResult;
+                responseContent.className = 'response-content success';
+
+            } catch (error) {
+                setStatus(2, 'error');
+                responseContent.textContent = '// Error:\n' + error.message + '\n\n// Make sure:\n// 1. Your n8n webhook is running\n// 2. You clicked "Listen for test event" in n8n\n// 3. The URL is correct';
+                responseContent.className = 'response-content error';
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📅 Schedule & Check Eligibility';
+        });
+    </script>
+</body>
+</html>
