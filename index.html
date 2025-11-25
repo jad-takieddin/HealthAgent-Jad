@@ -668,23 +668,45 @@
             setStatus(2, 'success');
             setFlow(3);
             setStatus(3, 'pending');
-
-            const resultText = await response.text();
-            let result;
-            let displayResult;
-
+            const result = await response.text();
+            let parsed = null;
+            
             try {
-                result = JSON.parse(resultText);
-                displayResult = JSON.stringify(result, null, 2);
+                parsed = JSON.parse(result);
             } catch {
-                result = null;
-                displayResult = resultText;
+                // not JSON, fallback
             }
-
+            
+            // Default: plain text display
+            let displayText = '// Agent Response:\n' + result;
+            
+            if (parsed && typeof parsed === 'object' && parsed.status) {
+                // Build a nicer, human-readable message
+                const status = parsed.status;
+                const uiMessage = parsed.uiMessage || '';
+                
+                displayText =
+                    'Status: ' + status + '\n' +
+                    (uiMessage ? 'Message: ' + uiMessage + '\n\n' : '\n') +
+                    'Full Response:\n' + JSON.stringify(parsed, null, 2);
+            
+                // Color coding
+                if (status === 'eligible') {
+                    responseContent.className = 'response-content success';
+                } else if (status === 'needs_review') {
+                    responseContent.className = 'response-content warning';
+                } else {
+                    responseContent.className = 'response-content error';
+                }
+            } else {
+                // No structured status found, fallback
+                responseContent.className = 'response-content';
+            }
+            
             setStatus(3, 'success');
             setFlow(4);
-            responseContent.textContent = '// Agent Response:\n' + displayResult;
-            responseContent.className = 'response-content success';
+            responseContent.textContent = displayText;
+
 
             // Show eligibility banner if structured response
             if (result && result.status) {
