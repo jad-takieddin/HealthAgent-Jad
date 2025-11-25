@@ -77,7 +77,7 @@
             margin: 0 auto;
             padding: 32px;
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 1fr 360px;
             gap: 32px;
         }
 
@@ -180,104 +180,7 @@
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 24px;
-        }
-
-        .status-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        }
-
-        .status-panel h3 {
-            font-size: 14px;
-            color: #5B3CC4;
-            margin-bottom: 16px;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #f8f8fc;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #ddd;
-        }
-
-        .status-dot.pending { background: #f59e0b; animation: pulse 1s infinite; }
-        .status-dot.success { background: #10b981; }
-        .status-dot.error { background: #ef4444; }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .status-item span {
-            font-size: 13px;
-            color: #555;
-        }
-
-        /* Response Panel */
-        .response-panel {
-            background: linear-gradient(135deg, #2D2450 0%, #1a1a2e 100%);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            flex-grow: 1;
-        }
-
-        .response-panel h3 {
-            font-size: 14px;
-            color: #A78BFA;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .response-content {
-            background: #0d0d1a;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 11px;
-            color: #a0a0a0;
-            overflow-x: auto;
-            min-height: 150px;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .response-content.success {
-            color: #A78BFA;
-        }
-
-        .response-content.error {
-            color: #f87171;
-        }
-
-        /* Demo Badge */
-        .demo-badge {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+            gap: 20px;
         }
 
         /* Agent Flow Indicator */
@@ -286,20 +189,19 @@
             border: 1px solid #DDD6FE;
             border-radius: 12px;
             padding: 16px;
-            margin-bottom: 24px;
         }
 
         .flow-indicator h4 {
             font-size: 12px;
             color: #5B3CC4;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
         .flow-steps {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             font-size: 11px;
             color: #7C5CE7;
         }
@@ -321,9 +223,123 @@
             border-color: #5B3CC4;
         }
 
-        /* Eligibility banner */
-        #eligibilityBanner {
-            display: none;
+        /* Result Panel */
+        .result-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .result-panel h3 {
+            font-size: 14px;
+            color: #5B3CC4;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Result States */
+        .result-display {
+            padding: 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .result-display.waiting {
+            background: #f8f8fc;
+            border: 2px dashed #ddd;
+        }
+
+        .result-display.processing {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            animation: pulse-border 1.5s infinite;
+        }
+
+        .result-display.eligible {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid #10b981;
+        }
+
+        .result-display.needs_review {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border: 2px solid #f59e0b;
+        }
+
+        .result-display.not_eligible {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #ef4444;
+        }
+
+        @keyframes pulse-border {
+            0%, 100% { border-color: #f59e0b; }
+            50% { border-color: #fcd34d; }
+        }
+
+        .result-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .result-status {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-display.waiting .result-status { color: #9ca3af; }
+        .result-display.processing .result-status { color: #b45309; }
+        .result-display.eligible .result-status { color: #065f46; }
+        .result-display.needs_review .result-status { color: #92400e; }
+        .result-display.not_eligible .result-status { color: #991b1b; }
+
+        .result-message {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .result-display.eligible .result-message { color: #047857; }
+        .result-display.needs_review .result-message { color: #b45309; }
+        .result-display.not_eligible .result-message { color: #b91c1c; }
+
+        /* Details Section */
+        .result-details {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .result-details .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .result-details .detail-label {
+            color: #666;
+        }
+
+        .result-details .detail-value {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* Demo Badge */
+        .demo-badge {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
         }
     </style>
 </head>
@@ -354,9 +370,10 @@
                     <label>Existing Student (optional)</label>
                     <select id="studentPreset">
                         <option value="">Select a student...</option>
-                        <option value="emma_johnson">Emma Johnson – Oakland USD</option>
-                        <option value="li_wong">Li Wong – SF Unified</option>
-                        <option value="jayden_smith">Jayden Smith – LA Unified</option>
+                        <option value="emma_johnson">Emma Johnson – Oakland USD (BCBS)</option>
+                        <option value="li_wong">Li Wong – SF Unified (Medicaid)</option>
+                        <option value="jayden_smith">Jayden Smith – LA Unified (Aetna)</option>
+                        <option value="maria_garcia">Maria Garcia – Miami-Dade (Cigna)</option>
                     </select>
                 </div>
 
@@ -437,19 +454,6 @@
                     <input type="text" id="groupNumber" value="GRP8899">
                 </div>
 
-                <!-- Eligibility result banner -->
-                <div class="form-group full-width" id="eligibilityBanner" style="margin-top: 8px; display:none;">
-                    <div id="eligibilityText" style="
-                        padding: 10px 14px;
-                        border-radius: 8px;
-                        font-size: 13px;
-                        background: #f3f4ff;
-                        color: #111827;
-                    ">
-                        <!-- Filled by JS -->
-                    </div>
-                </div>
-
                 <button type="submit" class="submit-btn" id="submitBtn">
                     📅 Schedule & Check Eligibility
                 </button>
@@ -462,164 +466,230 @@
                 <div class="flow-steps">
                     <span class="flow-step" id="flow1">Form</span>
                     <span class="arrow">→</span>
-                    <span class="flow-step" id="flow2">Agent</span>
+                    <span class="flow-step" id="flow2">Validate</span>
                     <span class="arrow">→</span>
-                    <span class="flow-step" id="flow3">Payer API</span>
+                    <span class="flow-step" id="flow3">Check</span>
                     <span class="arrow">→</span>
                     <span class="flow-step" id="flow4">Result</span>
                 </div>
             </div>
 
-            <div class="status-panel">
-                <h3>📊 Request Status</h3>
-                <div class="status-item">
-                    <div class="status-dot" id="status1"></div>
-                    <span>Form submitted</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-dot" id="status2"></div>
-                    <span>Sent to agent</span>
-                </div>
-                <div class="status-item">
-                    <div class="status-dot" id="status3"></div>
-                    <span>Agent response received</span>
-                </div>
-            </div>
-
-            <div class="response-panel">
-                <h3>💻 Agent Response</h3>
-                <div class="response-content" id="responseContent">
-// Response will appear here after submitting...
-
-// This shows what your n8n agent returns
-// after processing the eligibility check
+            <div class="result-panel">
+                <h3>📊 Eligibility Status</h3>
+                
+                <div class="result-display waiting" id="resultDisplay">
+                    <div class="result-icon" id="resultIcon">⏳</div>
+                    <div class="result-status" id="resultStatus">Awaiting Submission</div>
+                    <div class="result-message" id="resultMessage">Fill out the form and click submit to check eligibility</div>
+                    <div class="result-details" id="resultDetails" style="display: none;"></div>
                 </div>
             </div>
         </aside>
     </main>
 
     <script>
-    // 1. Put your n8n PRODUCTION POST URL here
+    // ============================================
+    // CONFIGURATION
+    // ============================================
     const WEBHOOK_URL = "https://jado2003.app.n8n.cloud/webhook/eligibility-check";
 
-    // Hardcoded "students" to simulate Hazel's DB
+    // ============================================
+    // MOCK STUDENT DATABASE
+    // ============================================
     const STUDENT_PROFILES = {
-      emma_johnson: {
-        student: {
-          firstName: "Emma",
-          lastName: "Johnson",
-          dateOfBirth: "2012-03-15",
-          schoolDistrict: "oakland-usd",
+        emma_johnson: {
+            student: {
+                firstName: "Emma",
+                lastName: "Johnson",
+                dateOfBirth: "2012-03-15",
+                schoolDistrict: "oakland-usd",
+            },
+            insurance: {
+                provider: "bcbs",
+                planType: "ppo",
+                subscriberName: "Michael Johnson",
+                subscriberDOB: "1980-07-22",
+                memberId: "XYZ123456789",
+                groupNumber: "GRP8899",
+            }
         },
-        insurance: {
-          provider: "bcbs",
-          planType: "ppo",
-          subscriberName: "Michael Johnson",
-          subscriberDOB: "1980-07-22",
-          memberId: "XYZ123456789",
-          groupNumber: "GRP8899",
-        }
-      },
-      li_wong: {
-        student: {
-          firstName: "Li",
-          lastName: "Wong",
-          dateOfBirth: "2011-09-02",
-          schoolDistrict: "sf-unified",
+        li_wong: {
+            student: {
+                firstName: "Li",
+                lastName: "Wong",
+                dateOfBirth: "2011-09-02",
+                schoolDistrict: "sf-unified",
+            },
+            insurance: {
+                provider: "medicaid",
+                planType: "hmo",
+                subscriberName: "Jia Wong",
+                subscriberDOB: "1983-02-11",
+                memberId: "MED123456",
+                groupNumber: "",
+            }
         },
-        insurance: {
-          provider: "medicaid",
-          planType: "hmo",
-          subscriberName: "Jia Wong",
-          subscriberDOB: "1983-02-11",
-          memberId: "MED123456",
-          groupNumber: "",
-        }
-      },
-      jayden_smith: {
-        student: {
-          firstName: "Jayden",
-          lastName: "Smith",
-          dateOfBirth: "2010-01-20",
-          schoolDistrict: "la-unified",
+        jayden_smith: {
+            student: {
+                firstName: "Jayden",
+                lastName: "Smith",
+                dateOfBirth: "2010-01-20",
+                schoolDistrict: "la-unified",
+            },
+            insurance: {
+                provider: "aetna",
+                planType: "ppo",
+                subscriberName: "Carla Smith",
+                subscriberDOB: "1985-05-10",
+                memberId: "AET998877",
+                groupNumber: "GRP5544",
+            }
         },
-        insurance: {
-          provider: "aetna",
-          planType: "ppo",
-          subscriberName: "Carla Smith",
-          subscriberDOB: "1985-05-10",
-          memberId: "AET998877",
-          groupNumber: "GRP5544",
+        maria_garcia: {
+            student: {
+                firstName: "Maria",
+                lastName: "Garcia",
+                dateOfBirth: "2013-06-08",
+                schoolDistrict: "miami-dade",
+            },
+            insurance: {
+                provider: "cigna",
+                planType: "ppo",
+                subscriberName: "Carlos Garcia",
+                subscriberDOB: "1979-11-30",
+                memberId: "CIG555444",
+                groupNumber: "GRP1122",
+            }
         }
-      }
     };
 
-    // When user selects an existing student, auto-fill fields
+    // ============================================
+    // AUTO-FILL WHEN STUDENT SELECTED
+    // ============================================
     document.getElementById('studentPreset').addEventListener('change', (e) => {
-      const key = e.target.value;
-      if (!key) return;
-      const profile = STUDENT_PROFILES[key];
+        const key = e.target.value;
+        if (!key) return;
+        const profile = STUDENT_PROFILES[key];
 
-      // Student fields
-      document.getElementById('studentFirstName').value = profile.student.firstName;
-      document.getElementById('studentLastName').value = profile.student.lastName;
-      document.getElementById('studentDOB').value = profile.student.dateOfBirth;
-      document.getElementById('schoolDistrict').value = profile.student.schoolDistrict;
+        document.getElementById('studentFirstName').value = profile.student.firstName;
+        document.getElementById('studentLastName').value = profile.student.lastName;
+        document.getElementById('studentDOB').value = profile.student.dateOfBirth;
+        document.getElementById('schoolDistrict').value = profile.student.schoolDistrict;
+        document.getElementById('insuranceProvider').value = profile.insurance.provider;
+        document.getElementById('planType').value = profile.insurance.planType;
+        document.getElementById('subscriberName').value = profile.insurance.subscriberName;
+        document.getElementById('subscriberDOB').value = profile.insurance.subscriberDOB;
+        document.getElementById('memberId').value = profile.insurance.memberId;
+        document.getElementById('groupNumber').value = profile.insurance.groupNumber;
 
-      // Insurance fields
-      document.getElementById('insuranceProvider').value = profile.insurance.provider;
-      document.getElementById('planType').value = profile.insurance.planType;
-      document.getElementById('subscriberName').value = profile.insurance.subscriberName;
-      document.getElementById('subscriberDOB').value = profile.insurance.subscriberDOB;
-      document.getElementById('memberId').value = profile.insurance.memberId;
-      document.getElementById('groupNumber').value = profile.insurance.groupNumber;
+        // Reset result display
+        resetResult();
     });
 
-    // Set today's date as default for appointment
     document.getElementById('appointmentDate').valueAsDate = new Date();
 
-    // Reset status dots
-    function resetStatus() {
-        document.getElementById('status1').className = 'status-dot';
-        document.getElementById('status2').className = 'status-dot';
-        document.getElementById('status3').className = 'status-dot';
-        document.getElementById('flow1').className = 'flow-step';
-        document.getElementById('flow2').className = 'flow-step';
-        document.getElementById('flow3').className = 'flow-step';
-        document.getElementById('flow4').className = 'flow-step';
-
-        // hide eligibility banner
-        const banner = document.getElementById('eligibilityBanner');
-        banner.style.display = 'none';
-    }
-
-    // Update status
-    function setStatus(num, state) {
-        document.getElementById('status' + num).className = 'status-dot ' + state;
-    }
-
-    // Update flow
+    // ============================================
+    // UI HELPER FUNCTIONS
+    // ============================================
     function setFlow(num) {
-        document.getElementById('flow' + num).className = 'flow-step active';
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById('flow' + i).className = 'flow-step' + (i <= num ? ' active' : '');
+        }
     }
 
-    // Form submission
+    function resetResult() {
+        const display = document.getElementById('resultDisplay');
+        display.className = 'result-display waiting';
+        document.getElementById('resultIcon').textContent = '⏳';
+        document.getElementById('resultStatus').textContent = 'Awaiting Submission';
+        document.getElementById('resultMessage').textContent = 'Fill out the form and click submit to check eligibility';
+        document.getElementById('resultDetails').style.display = 'none';
+        setFlow(0);
+    }
+
+    function showProcessing() {
+        const display = document.getElementById('resultDisplay');
+        display.className = 'result-display processing';
+        document.getElementById('resultIcon').textContent = '🔄';
+        document.getElementById('resultStatus').textContent = 'Checking Eligibility...';
+        document.getElementById('resultMessage').textContent = 'Validating data and contacting payer...';
+        document.getElementById('resultDetails').style.display = 'none';
+    }
+
+    function showResult(status, message, details = {}) {
+        const display = document.getElementById('resultDisplay');
+        const icon = document.getElementById('resultIcon');
+        const statusEl = document.getElementById('resultStatus');
+        const messageEl = document.getElementById('resultMessage');
+        const detailsEl = document.getElementById('resultDetails');
+
+        // Set class based on status
+        let displayClass = 'result-display ';
+        if (status === 'eligible') {
+            displayClass += 'eligible';
+            icon.textContent = '✅';
+            statusEl.textContent = 'Eligible';
+        } else if (status === 'needs_review') {
+            displayClass += 'needs_review';
+            icon.textContent = '⚠️';
+            statusEl.textContent = 'Needs Review';
+        } else {
+            displayClass += 'not_eligible';
+            icon.textContent = '❌';
+            statusEl.textContent = 'Not Eligible';
+        }
+
+        display.className = displayClass;
+        messageEl.textContent = message;
+
+        // Show details if available
+        if (details && Object.keys(details).length > 0) {
+            let detailsHtml = '';
+            
+            if (details.copay !== undefined) {
+                detailsHtml += `<div class="detail-row"><span class="detail-label">Copay</span><span class="detail-value">$${details.copay}</span></div>`;
+            }
+            if (details.coverageType) {
+                detailsHtml += `<div class="detail-row"><span class="detail-label">Coverage</span><span class="detail-value">${details.coverageType}</span></div>`;
+            }
+            if (details.issues && details.issues.length > 0) {
+                detailsHtml += `<div class="detail-row"><span class="detail-label">Issues</span><span class="detail-value">${details.issues.join(', ')}</span></div>`;
+            }
+            if (details.notes) {
+                detailsHtml += `<div class="detail-row"><span class="detail-label">Notes</span><span class="detail-value">${details.notes}</span></div>`;
+            }
+
+            if (detailsHtml) {
+                detailsEl.innerHTML = detailsHtml;
+                detailsEl.style.display = 'block';
+            }
+        } else {
+            detailsEl.style.display = 'none';
+        }
+    }
+
+    function showError(message) {
+        const display = document.getElementById('resultDisplay');
+        display.className = 'result-display not_eligible';
+        document.getElementById('resultIcon').textContent = '❌';
+        document.getElementById('resultStatus').textContent = 'Error';
+        document.getElementById('resultMessage').textContent = message;
+        document.getElementById('resultDetails').style.display = 'none';
+    }
+
+    // ============================================
+    // FORM SUBMISSION
+    // ============================================
     document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Use the constant webhook URL
-        const webhookUrl = WEBHOOK_URL;
-
         const submitBtn = document.getElementById('submitBtn');
-        const responseContent = document.getElementById('responseContent');
-        const banner = document.getElementById('eligibilityBanner');
-        const bannerText = document.getElementById('eligibilityText');
         
         // Reset and start
-        resetStatus();
         submitBtn.disabled = true;
         submitBtn.textContent = '⏳ Processing...';
-        responseContent.className = 'response-content';
+        setFlow(1);
+        showProcessing();
         
         // Build payload
         const payload = {
@@ -646,98 +716,52 @@
             }
         };
 
-        // Status 1: Form submitted
-        setStatus(1, 'success');
-        setFlow(1);
-        responseContent.textContent = '// Payload sent to agent:\n' + JSON.stringify(payload, null, 2);
-
         try {
-            // Status 2: Sending to agent
             await new Promise(r => setTimeout(r, 300));
-            setStatus(2, 'pending');
             setFlow(2);
             
-            const response = await fetch(webhookUrl, {
+            const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            setStatus(2, 'success');
             setFlow(3);
-            setStatus(3, 'pending');
-            const result = await response.text();
+            await new Promise(r => setTimeout(r, 200));
+
+            const resultText = await response.text();
             let parsed = null;
             
             try {
-                parsed = JSON.parse(result);
+                parsed = JSON.parse(resultText);
             } catch {
-                // not JSON, fallback
+                // Not JSON
             }
-            
-            // Default: plain text display
-            let displayText = '// Agent Response:\n' + result;
-            
-            if (parsed && typeof parsed === 'object' && parsed.status) {
-                // Build a nicer, human-readable message
-                const status = parsed.status;
-                const uiMessage = parsed.uiMessage || '';
-                
-                displayText =
-                    'Status: ' + status + '\n' +
-                    (uiMessage ? 'Message: ' + uiMessage + '\n\n' : '\n') +
-                    'Full Response:\n' + JSON.stringify(parsed, null, 2);
-            
-                // Color coding
-                if (status === 'eligible') {
-                    responseContent.className = 'response-content success';
-                } else if (status === 'needs_review') {
-                    responseContent.className = 'response-content warning';
-                } else {
-                    responseContent.className = 'response-content error';
-                }
-            } else {
-                // No structured status found, fallback
-                responseContent.className = 'response-content';
-            }
-            
-            setStatus(3, 'success');
+
             setFlow(4);
-            responseContent.textContent = displayText;
 
-
-            // Show eligibility banner if structured response
-            if (result && result.status) {
-                banner.style.display = 'block';
-                const status = result.status;
-                const msg = result.uiMessage || '';
-
-                bannerText.textContent = msg || `Status: ${status}`;
-
-                if (status === 'eligible') {
-                    bannerText.style.background = '#ecfdf3';
-                    bannerText.style.color = '#166534';
-                } else if (status === 'needs_review') {
-                    bannerText.style.background = '#fffbeb';
-                    bannerText.style.color = '#92400e';
-                } else { // not_eligible or anything else
-                    bannerText.style.background = '#fef2f2';
-                    bannerText.style.color = '#b91c1c';
-                }
+            if (parsed && typeof parsed === 'object') {
+                const status = parsed.status || 'unknown';
+                const message = parsed.uiMessage || parsed.message || `Status: ${status}`;
+                const details = {
+                    copay: parsed.copay,
+                    coverageType: parsed.coverageType,
+                    notes: parsed.notes,
+                    issues: parsed.issues
+                };
+                showResult(status, message, details);
+            } else {
+                showResult('needs_review', 'Received response but could not parse eligibility status');
             }
 
         } catch (error) {
-            setStatus(2, 'error');
-            responseContent.textContent = '// Error:\n' + error.message + '\n\n// Make sure:\n// 1. Your n8n webhook is running\n// 2. The URL is correct\n// 3. CORS is configured if needed';
-            responseContent.className = 'response-content error';
+            setFlow(4);
+            showError('Failed to connect to agent: ' + error.message);
         }
 
         submitBtn.disabled = false;
         submitBtn.textContent = '📅 Schedule & Check Eligibility';
     });
     </script>
-
 </body>
 </html>
