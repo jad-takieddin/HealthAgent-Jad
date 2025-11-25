@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hazel Health - Appointment Scheduler</title>
+    <title>Hazel Health - AI Eligibility Agent</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: #f5f5f8;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
             min-height: 100vh;
         }
 
@@ -24,7 +24,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(91, 60, 196, 0.2);
+            box-shadow: 0 4px 20px rgba(91, 60, 196, 0.3);
         }
 
         .logo {
@@ -35,14 +35,14 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             background: white;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
             color: #5B3CC4;
             font-weight: bold;
         }
@@ -52,65 +52,88 @@
             font-weight: 600;
         }
 
-        .header-nav {
+        .header-badge {
             display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 13px;
+        }
+
+        .header-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Main Layout */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 420px;
             gap: 24px;
         }
 
-        .header-nav a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            font-size: 14px;
-            padding: 8px 16px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .header-nav a:hover, .header-nav a.active {
-            background: rgba(255,255,255,0.15);
-            color: white;
-        }
-
-        /* Main Content */
-        .main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px;
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 32px;
-        }
-
-        /* Form Section */
-        .form-section {
+        /* Form Card */
+        .form-card {
             background: white;
             border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-        .form-section h1 {
-            font-size: 24px;
-            color: #5B3CC4;
-            margin-bottom: 8px;
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
         }
 
-        .form-section .subtitle {
+        .form-header h1 {
+            font-size: 22px;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
             color: #666;
-            margin-bottom: 32px;
             font-size: 14px;
+        }
+
+        .ai-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 16px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
 
         .form-group.full-width {
@@ -118,37 +141,40 @@
         }
 
         .form-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #444;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group input, .form-group select {
-            padding: 12px 14px;
-            border: 1px solid #ddd;
+            padding: 11px 14px;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 14px;
             transition: all 0.2s;
+            background: #fafafa;
         }
 
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #7C5CE7;
-            box-shadow: 0 0 0 3px rgba(124, 92, 231, 0.15);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(124, 92, 231, 0.1);
         }
 
-        .section-divider {
+        .section-title {
             grid-column: span 2;
-            border-top: 1px solid #eee;
-            margin: 12px 0;
-            padding-top: 20px;
-        }
-
-        .section-divider h3 {
-            font-size: 14px;
-            color: #5B3CC4;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 16px;
+            color: #5B3CC4;
+            padding: 16px 0 8px 0;
+            border-top: 1px solid #eee;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .submit-btn {
@@ -157,17 +183,21 @@
             color: white;
             padding: 14px 24px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 12px;
+            transition: all 0.3s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .submit-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(91, 60, 196, 0.35);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(91, 60, 196, 0.4);
         }
 
         .submit-btn:disabled {
@@ -176,222 +206,344 @@
             transform: none;
         }
 
-        /* Sidebar */
+        /* Right Sidebar */
         .sidebar {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        /* Agent Flow Indicator */
-        .flow-indicator {
-            background: linear-gradient(135deg, #EDE9FE 0%, #F3E8FF 100%);
-            border: 1px solid #DDD6FE;
-            border-radius: 12px;
-            padding: 16px;
+        /* AI Agent Card */
+        .agent-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border-radius: 16px;
+            padding: 20px;
+            color: white;
         }
 
-        .flow-indicator h4 {
-            font-size: 12px;
-            color: #5B3CC4;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .flow-steps {
+        .agent-header {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: #7C5CE7;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
-        .flow-steps .arrow {
-            color: #C4B5FD;
+        .agent-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #7C5CE7 0%, #a78bfa 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
 
-        .flow-step {
-            background: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #DDD6FE;
-        }
-
-        .flow-step.active {
-            background: #5B3CC4;
-            color: white;
-            border-color: #5B3CC4;
-        }
-
-        /* Result Panel */
-        .result-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        .result-panel h3 {
-            font-size: 14px;
-            color: #5B3CC4;
-            margin-bottom: 20px;
+        .agent-header h3 {
+            font-size: 16px;
             font-weight: 600;
         }
 
-        /* Result States */
-        .result-display {
+        .agent-header span {
+            font-size: 12px;
+            color: #a0a0b0;
+        }
+
+        .agent-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .agent-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #a0a0b0;
+            transition: all 0.3s;
+        }
+
+        .agent-step.active {
+            background: rgba(124, 92, 231, 0.2);
+            color: white;
+        }
+
+        .agent-step.complete {
+            background: rgba(16, 185, 129, 0.2);
+            color: #4ade80;
+        }
+
+        .step-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .agent-step.active .step-icon {
+            background: #7C5CE7;
+            animation: pulse 1s infinite;
+        }
+
+        .agent-step.complete .step-icon {
+            background: #10b981;
+        }
+
+        /* Result Card */
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .result-header {
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-body {
             padding: 24px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s;
         }
 
-        .result-display.waiting {
-            background: #f8f8fc;
-            border: 2px dashed #ddd;
+        .result-body.waiting {
+            background: #f8f9fa;
         }
 
-        .result-display.processing {
+        .result-body.processing {
             background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-            border: 2px solid #f59e0b;
-            animation: pulse-border 1.5s infinite;
         }
 
-        .result-display.eligible {
+        .result-body.eligible {
             background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 2px solid #10b981;
         }
 
-        .result-display.needs_review {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            border: 2px solid #f59e0b;
+        .result-body.pending_auth {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
         }
 
-        .result-display.not_eligible {
+        .result-body.needs_review {
+            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+        }
+
+        .result-body.not_eligible {
             background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            border: 2px solid #ef4444;
-        }
-
-        @keyframes pulse-border {
-            0%, 100% { border-color: #f59e0b; }
-            50% { border-color: #fcd34d; }
         }
 
         .result-icon {
-            font-size: 48px;
+            font-size: 52px;
             margin-bottom: 12px;
         }
 
         .result-status {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
             margin-bottom: 8px;
         }
 
-        .result-display.waiting .result-status { color: #9ca3af; }
-        .result-display.processing .result-status { color: #b45309; }
-        .result-display.eligible .result-status { color: #065f46; }
-        .result-display.needs_review .result-status { color: #92400e; }
-        .result-display.not_eligible .result-status { color: #991b1b; }
+        .result-body.waiting .result-status { color: #9ca3af; }
+        .result-body.processing .result-status { color: #b45309; }
+        .result-body.eligible .result-status { color: #059669; }
+        .result-body.pending_auth .result-status { color: #b45309; }
+        .result-body.needs_review .result-status { color: #c2410c; }
+        .result-body.not_eligible .result-status { color: #dc2626; }
 
         .result-message {
-            font-size: 13px;
-            color: #666;
+            font-size: 14px;
+            color: #555;
             line-height: 1.5;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
-        .result-display.eligible .result-message { color: #047857; }
-        .result-display.needs_review .result-message { color: #b45309; }
-        .result-display.not_eligible .result-message { color: #b91c1c; }
-
-        /* Details Section */
         .result-details {
             margin-top: 16px;
             padding-top: 16px;
             border-top: 1px solid rgba(0,0,0,0.1);
-            text-align: left;
-            font-size: 12px;
-        }
-
-        .result-details .detail-row {
             display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
+            justify-content: center;
+            gap: 24px;
+            font-size: 13px;
         }
 
-        .result-details .detail-label {
-            color: #666;
+        .result-detail {
+            text-align: center;
         }
 
-        .result-details .detail-value {
-            font-weight: 500;
+        .result-detail-label {
+            color: #888;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-detail-value {
+            font-weight: 700;
             color: #333;
+            font-size: 16px;
+            margin-top: 2px;
         }
 
-        /* Demo Badge */
-        .demo-badge {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+        /* AI Reasoning Card */
+        .reasoning-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .reasoning-header {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reasoning-body {
+            padding: 16px 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+            min-height: 60px;
+        }
+
+        .reasoning-body.empty {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .powered-by {
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #888;
+        }
+
+        .powered-by img {
+            height: 16px;
+            opacity: 0.7;
+        }
+
+        /* Processing Animation */
+        @keyframes thinking {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .thinking-dots span {
+            animation: thinking 1.4s infinite;
+        }
+
+        .thinking-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .thinking-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Demo Banner */
+        .demo-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #7C5CE7 0%, #a78bfa 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(124, 92, 231, 0.4);
         }
     </style>
 </head>
 <body>
-    <div class="demo-badge">🔧 DEMO MODE</div>
-    
+    <div class="demo-banner">
+        🎯 INTERVIEW DEMO — Hazel Health AI Agent
+    </div>
+
     <header class="header">
         <div class="logo">
             <div class="logo-icon">H</div>
             <span class="logo-text">Hazel Health</span>
         </div>
-        <nav class="header-nav">
-            <a href="#">Dashboard</a>
-            <a href="#" class="active">Schedule Visit</a>
-            <a href="#">Students</a>
-            <a href="#">Reports</a>
-        </nav>
+        <div class="header-badge">
+            <div class="pulse"></div>
+            AI Agent Active
+        </div>
     </header>
 
     <main class="main">
-        <section class="form-section">
-            <h1>Schedule a Student Visit</h1>
-            <p class="subtitle">Enter student and insurance information to schedule a telehealth appointment</p>
-            
+        <section class="form-card">
+            <div class="form-header">
+                <div>
+                    <h1>Schedule Student Visit</h1>
+                    <p>Enter student details — AI will verify eligibility automatically</p>
+                </div>
+                <div class="ai-badge">
+                    🤖 AI-POWERED
+                </div>
+            </div>
+
             <form id="appointmentForm" class="form-grid">
-                <!-- Existing Student Selector -->
                 <div class="form-group full-width">
-                    <label>Existing Student (optional)</label>
+                    <label>Select Student</label>
                     <select id="studentPreset">
-                        <option value="">Select a student...</option>
-                        <option value="emma_johnson">Emma Johnson – Oakland USD (BCBS)</option>
-                        <option value="li_wong">Li Wong – SF Unified (Medicaid)</option>
-                        <option value="jayden_smith">Jayden Smith – LA Unified (Aetna)</option>
-                        <option value="maria_garcia">Maria Garcia – Miami-Dade (Cigna)</option>
+                        <option value="">Choose a student...</option>
+                        <option value="emma_johnson">Emma Johnson — Oakland USD (BCBS)</option>
+                        <option value="li_wong">Li Wong — SF Unified (Medicaid)</option>
+                        <option value="jayden_smith">Jayden Smith — LA Unified (Aetna)</option>
+                        <option value="maria_garcia">Maria Garcia — Miami-Dade (Cigna)</option>
                     </select>
                 </div>
 
-                <!-- Student Information -->
                 <div class="form-group">
-                    <label>Student First Name *</label>
+                    <label>First Name</label>
                     <input type="text" id="studentFirstName" value="Emma" required>
                 </div>
                 <div class="form-group">
-                    <label>Student Last Name *</label>
+                    <label>Last Name</label>
                     <input type="text" id="studentLastName" value="Johnson" required>
                 </div>
                 <div class="form-group">
-                    <label>Date of Birth *</label>
+                    <label>Date of Birth</label>
                     <input type="date" id="studentDOB" value="2012-03-15" required>
                 </div>
                 <div class="form-group">
-                    <label>School District *</label>
+                    <label>School District</label>
                     <select id="schoolDistrict" required>
                         <option value="oakland-usd">Oakland USD</option>
                         <option value="sf-unified">San Francisco Unified</option>
@@ -400,25 +552,24 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Appointment Type *</label>
+                    <label>Visit Type</label>
                     <select id="appointmentType" required>
                         <option value="mental_health">Mental Health</option>
                         <option value="physical_health">Physical Health</option>
-                        <option value="follow_up">Follow-up Visit</option>
+                        <option value="follow_up">Follow-up</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Requested Date *</label>
+                    <label>Requested Date</label>
                     <input type="date" id="appointmentDate" required>
                 </div>
 
-                <!-- Insurance Section -->
-                <div class="section-divider">
-                    <h3>📋 Insurance Information</h3>
+                <div class="section-title">
+                    📋 Insurance Details
                 </div>
-                
+
                 <div class="form-group">
-                    <label>Insurance Provider *</label>
+                    <label>Provider</label>
                     <select id="insuranceProvider" required>
                         <option value="bcbs">Blue Cross Blue Shield</option>
                         <option value="united">UnitedHealthcare</option>
@@ -434,19 +585,18 @@
                         <option value="ppo">PPO</option>
                         <option value="hmo">HMO</option>
                         <option value="epo">EPO</option>
-                        <option value="pos">POS</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Subscriber Name (Parent/Guardian) *</label>
+                    <label>Subscriber Name</label>
                     <input type="text" id="subscriberName" value="Michael Johnson" required>
                 </div>
                 <div class="form-group">
-                    <label>Subscriber DOB *</label>
+                    <label>Subscriber DOB</label>
                     <input type="date" id="subscriberDOB" value="1980-07-22" required>
                 </div>
                 <div class="form-group">
-                    <label>Member ID *</label>
+                    <label>Member ID</label>
                     <input type="text" id="memberId" value="XYZ123456789" required>
                 </div>
                 <div class="form-group">
@@ -455,117 +605,93 @@
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">
-                    📅 Schedule & Check Eligibility
+                    <span>🚀</span>
+                    <span>Run Eligibility Check</span>
                 </button>
             </form>
         </section>
 
         <aside class="sidebar">
-            <div class="flow-indicator">
-                <h4>🤖 Agent Workflow</h4>
-                <div class="flow-steps">
-                    <span class="flow-step" id="flow1">Form</span>
-                    <span class="arrow">→</span>
-                    <span class="flow-step" id="flow2">Validate</span>
-                    <span class="arrow">→</span>
-                    <span class="flow-step" id="flow3">Check</span>
-                    <span class="arrow">→</span>
-                    <span class="flow-step" id="flow4">Result</span>
+            <!-- AI Agent Status -->
+            <div class="agent-card">
+                <div class="agent-header">
+                    <div class="agent-icon">🤖</div>
+                    <div>
+                        <h3>Eligibility Agent</h3>
+                        <span>Automated verification workflow</span>
+                    </div>
+                </div>
+                <div class="agent-steps">
+                    <div class="agent-step" id="step1">
+                        <div class="step-icon">1</div>
+                        <span>Validate patient data</span>
+                    </div>
+                    <div class="agent-step" id="step2">
+                        <div class="step-icon">2</div>
+                        <span>Query payer system</span>
+                    </div>
+                    <div class="agent-step" id="step3">
+                        <div class="step-icon">3</div>
+                        <span>AI interprets response</span>
+                    </div>
+                    <div class="agent-step" id="step4">
+                        <div class="step-icon">4</div>
+                        <span>Return decision</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="result-panel">
-                <h3>📊 Eligibility Status</h3>
-                
-                <div class="result-display waiting" id="resultDisplay">
+            <!-- Result Display -->
+            <div class="result-card">
+                <div class="result-header">
+                    📊 Eligibility Result
+                </div>
+                <div class="result-body waiting" id="resultBody">
                     <div class="result-icon" id="resultIcon">⏳</div>
-                    <div class="result-status" id="resultStatus">Awaiting Submission</div>
-                    <div class="result-message" id="resultMessage">Fill out the form and click submit to check eligibility</div>
+                    <div class="result-status" id="resultStatus">Waiting</div>
+                    <div class="result-message" id="resultMessage">Select a student and run eligibility check</div>
                     <div class="result-details" id="resultDetails" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- AI Reasoning -->
+            <div class="reasoning-card">
+                <div class="reasoning-header">
+                    🧠 AI Reasoning
+                </div>
+                <div class="reasoning-body empty" id="reasoningBody">
+                    AI analysis will appear here after running a check...
+                </div>
+                <div class="powered-by">
+                    Powered by AI Agent • n8n Workflow
                 </div>
             </div>
         </aside>
     </main>
 
     <script>
-    // ============================================
-    // CONFIGURATION
-    // ============================================
     const WEBHOOK_URL = "https://jado2003.app.n8n.cloud/webhook/eligibility-check";
 
-    // ============================================
-    // MOCK STUDENT DATABASE
-    // ============================================
     const STUDENT_PROFILES = {
         emma_johnson: {
-            student: {
-                firstName: "Emma",
-                lastName: "Johnson",
-                dateOfBirth: "2012-03-15",
-                schoolDistrict: "oakland-usd",
-            },
-            insurance: {
-                provider: "bcbs",
-                planType: "ppo",
-                subscriberName: "Michael Johnson",
-                subscriberDOB: "1980-07-22",
-                memberId: "XYZ123456789",
-                groupNumber: "GRP8899",
-            }
+            student: { firstName: "Emma", lastName: "Johnson", dateOfBirth: "2012-03-15", schoolDistrict: "oakland-usd" },
+            insurance: { provider: "bcbs", planType: "ppo", subscriberName: "Michael Johnson", subscriberDOB: "1980-07-22", memberId: "XYZ123456789", groupNumber: "GRP8899" }
         },
         li_wong: {
-            student: {
-                firstName: "Li",
-                lastName: "Wong",
-                dateOfBirth: "2011-09-02",
-                schoolDistrict: "sf-unified",
-            },
-            insurance: {
-                provider: "medicaid",
-                planType: "hmo",
-                subscriberName: "Jia Wong",
-                subscriberDOB: "1983-02-11",
-                memberId: "MED123456",
-                groupNumber: "",
-            }
+            student: { firstName: "Li", lastName: "Wong", dateOfBirth: "2011-09-02", schoolDistrict: "sf-unified" },
+            insurance: { provider: "medicaid", planType: "hmo", subscriberName: "Jia Wong", subscriberDOB: "1983-02-11", memberId: "MED123456", groupNumber: "" }
         },
         jayden_smith: {
-            student: {
-                firstName: "Jayden",
-                lastName: "Smith",
-                dateOfBirth: "2010-01-20",
-                schoolDistrict: "la-unified",
-            },
-            insurance: {
-                provider: "aetna",
-                planType: "ppo",
-                subscriberName: "Carla Smith",
-                subscriberDOB: "1985-05-10",
-                memberId: "AET998877",
-                groupNumber: "GRP5544",
-            }
+            student: { firstName: "Jayden", lastName: "Smith", dateOfBirth: "2010-01-20", schoolDistrict: "la-unified" },
+            insurance: { provider: "aetna", planType: "ppo", subscriberName: "Carla Smith", subscriberDOB: "1985-05-10", memberId: "AET998877", groupNumber: "GRP5544" }
         },
         maria_garcia: {
-            student: {
-                firstName: "Maria",
-                lastName: "Garcia",
-                dateOfBirth: "2013-06-08",
-                schoolDistrict: "miami-dade",
-            },
-            insurance: {
-                provider: "cigna",
-                planType: "ppo",
-                subscriberName: "Carlos Garcia",
-                subscriberDOB: "1979-11-30",
-                memberId: "CIG555444",
-                groupNumber: "GRP1122",
-            }
+            student: { firstName: "Maria", lastName: "Garcia", dateOfBirth: "2013-06-08", schoolDistrict: "miami-dade" },
+            insurance: { provider: "cigna", planType: "ppo", subscriberName: "Carlos Garcia", subscriberDOB: "1979-11-30", memberId: "CIG555444", groupNumber: "GRP1122" }
         }
     };
 
-    // ============================================
-    // AUTO-FILL WHEN STUDENT SELECTED
-    // ============================================
+    // Auto-fill form when student selected
     document.getElementById('studentPreset').addEventListener('change', (e) => {
         const key = e.target.value;
         if (!key) return;
@@ -581,149 +707,111 @@
         document.getElementById('subscriberDOB').value = profile.insurance.subscriberDOB;
         document.getElementById('memberId').value = profile.insurance.memberId;
         document.getElementById('groupNumber').value = profile.insurance.groupNumber;
-
-        resetResult();
+        
+        resetUI();
     });
 
     document.getElementById('appointmentDate').valueAsDate = new Date();
 
-    // ============================================
-    // UI HELPER FUNCTIONS
-    // ============================================
-    function setFlow(num) {
+    function resetUI() {
+        // Reset steps
         for (let i = 1; i <= 4; i++) {
-            document.getElementById('flow' + i).className = 'flow-step' + (i <= num ? ' active' : '');
+            document.getElementById('step' + i).className = 'agent-step';
         }
+        // Reset result
+        const resultBody = document.getElementById('resultBody');
+        resultBody.className = 'result-body waiting';
+        document.getElementById('resultIcon').textContent = '⏳';
+        document.getElementById('resultStatus').textContent = 'Waiting';
+        document.getElementById('resultMessage').textContent = 'Select a student and run eligibility check';
+        document.getElementById('resultDetails').style.display = 'none';
+        // Reset reasoning
+        const reasoning = document.getElementById('reasoningBody');
+        reasoning.className = 'reasoning-body empty';
+        reasoning.textContent = 'AI analysis will appear here after running a check...';
     }
 
-    function resetResult() {
-        const display = document.getElementById('resultDisplay');
-        display.className = 'result-display waiting';
-        document.getElementById('resultIcon').textContent = '⏳';
-        document.getElementById('resultStatus').textContent = 'Awaiting Submission';
-        document.getElementById('resultMessage').textContent = 'Fill out the form and click submit to check eligibility';
-        document.getElementById('resultDetails').style.display = 'none';
-        setFlow(0);
+    function setStep(num, status) {
+        const step = document.getElementById('step' + num);
+        step.className = 'agent-step ' + status;
     }
 
     function showProcessing() {
-        const display = document.getElementById('resultDisplay');
-        display.className = 'result-display processing';
-        document.getElementById('resultIcon').textContent = '🔄';
-        document.getElementById('resultStatus').textContent = 'Checking Eligibility...';
-        document.getElementById('resultMessage').textContent = 'Validating data and contacting payer...';
+        const resultBody = document.getElementById('resultBody');
+        resultBody.className = 'result-body processing';
+        document.getElementById('resultIcon').innerHTML = '🔄';
+        document.getElementById('resultStatus').innerHTML = 'Analyzing<span class="thinking-dots"><span>.</span><span>.</span><span>.</span></span>';
+        document.getElementById('resultMessage').textContent = 'AI agent is checking eligibility...';
         document.getElementById('resultDetails').style.display = 'none';
+        
+        const reasoning = document.getElementById('reasoningBody');
+        reasoning.className = 'reasoning-body';
+        reasoning.textContent = 'Processing payer response...';
     }
 
-    function showResult(status, message, details = {}) {
-        const display = document.getElementById('resultDisplay');
+    function showResult(status, message, copay, reasoning) {
+        const resultBody = document.getElementById('resultBody');
         const icon = document.getElementById('resultIcon');
         const statusEl = document.getElementById('resultStatus');
         const messageEl = document.getElementById('resultMessage');
         const detailsEl = document.getElementById('resultDetails');
+        const reasoningBody = document.getElementById('reasoningBody');
 
-        // Normalize status (handle variations)
-        const normalizedStatus = (status || '').toLowerCase().trim();
-        
-        console.log('Showing result with status:', normalizedStatus);
+        const normalizedStatus = (status || '').toLowerCase().replace(' ', '_');
 
-        let displayClass = 'result-display ';
-        if (normalizedStatus === 'eligible') {
-            displayClass += 'eligible';
-            icon.textContent = '✅';
-            statusEl.textContent = 'Eligible';
-        } else if (normalizedStatus === 'needs_review' || normalizedStatus === 'needs review' || normalizedStatus === 'pending') {
-            displayClass += 'needs_review';
-            icon.textContent = '⚠️';
-            statusEl.textContent = 'Needs Review';
-        } else {
-            displayClass += 'not_eligible';
-            icon.textContent = '❌';
-            statusEl.textContent = 'Not Eligible';
-        }
+        const statusConfig = {
+            eligible: { class: 'eligible', icon: '✅', label: 'Eligible', color: '#059669' },
+            pending_auth: { class: 'pending_auth', icon: '⏳', label: 'Pending Authorization', color: '#b45309' },
+            needs_review: { class: 'needs_review', icon: '⚠️', label: 'Needs Review', color: '#c2410c' },
+            not_eligible: { class: 'not_eligible', icon: '❌', label: 'Not Eligible', color: '#dc2626' }
+        };
 
-        display.className = displayClass;
-        messageEl.textContent = message || `Status: ${status}`;
+        const config = statusConfig[normalizedStatus] || statusConfig.needs_review;
 
-        // Show details if available
-        if (details && Object.keys(details).length > 0) {
-            let detailsHtml = '';
-            
-            if (details.copay !== undefined && details.copay !== null) {
-                detailsHtml += `<div class="detail-row"><span class="detail-label">Copay</span><span class="detail-value">$${details.copay}</span></div>`;
-            }
-            if (details.coverageType) {
-                detailsHtml += `<div class="detail-row"><span class="detail-label">Coverage</span><span class="detail-value">${details.coverageType}</span></div>`;
-            }
-            if (details.issues && details.issues.length > 0) {
-                detailsHtml += `<div class="detail-row"><span class="detail-label">Issues</span><span class="detail-value">${details.issues.join(', ')}</span></div>`;
-            }
-            if (details.notes) {
-                detailsHtml += `<div class="detail-row"><span class="detail-label">Notes</span><span class="detail-value">${details.notes}</span></div>`;
-            }
+        resultBody.className = 'result-body ' + config.class;
+        icon.textContent = config.icon;
+        statusEl.textContent = config.label;
+        messageEl.textContent = message || 'Check complete';
 
-            if (detailsHtml) {
-                detailsEl.innerHTML = detailsHtml;
-                detailsEl.style.display = 'block';
-            }
+        // Show copay if available
+        if (copay !== null && copay !== undefined && normalizedStatus === 'eligible') {
+            detailsEl.innerHTML = `
+                <div class="result-detail">
+                    <div class="result-detail-label">Copay</div>
+                    <div class="result-detail-value">$${copay}</div>
+                </div>
+                <div class="result-detail">
+                    <div class="result-detail-label">Status</div>
+                    <div class="result-detail-value">Active</div>
+                </div>
+            `;
+            detailsEl.style.display = 'flex';
         } else {
             detailsEl.style.display = 'none';
         }
+
+        // Show AI reasoning
+        reasoningBody.className = 'reasoning-body';
+        reasoningBody.textContent = reasoning || 'Analysis complete.';
     }
 
-    function showError(message) {
-        const display = document.getElementById('resultDisplay');
-        display.className = 'result-display not_eligible';
-        document.getElementById('resultIcon').textContent = '❌';
-        document.getElementById('resultStatus').textContent = 'Error';
-        document.getElementById('resultMessage').textContent = message;
-        document.getElementById('resultDetails').style.display = 'none';
-    }
-
-    // ============================================
-    // EXTRACT DATA FROM N8N RESPONSE
-    // n8n can return data in different formats
-    // ============================================
-    function extractResponseData(parsed) {
-        console.log('Raw parsed response:', parsed);
-        
-        let data = parsed;
-        
-        // If it's an array, get the first item
-        if (Array.isArray(parsed)) {
-            console.log('Response is an array, extracting first item');
-            data = parsed[0];
-        }
-        
-        // If it has a 'json' wrapper (n8n format), unwrap it
-        if (data && data.json) {
-            console.log('Response has json wrapper, unwrapping');
-            data = data.json;
-        }
-        
-        // If it's nested in 'data', unwrap it
-        if (data && data.data && typeof data.data === 'object') {
-            console.log('Response has data wrapper, unwrapping');
-            data = data.data;
-        }
-        
-        console.log('Extracted data:', data);
-        return data;
-    }
-
-    // ============================================
-    // FORM SUBMISSION
-    // ============================================
+    // Form submission
     document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         const submitBtn = document.getElementById('submitBtn');
-        
         submitBtn.disabled = true;
-        submitBtn.textContent = '⏳ Processing...';
-        setFlow(1);
+        submitBtn.innerHTML = '<span>⏳</span><span>Running...</span>';
+
+        resetUI();
         showProcessing();
-        
+
+        // Animate steps
+        setStep(1, 'active');
+        await sleep(400);
+        setStep(1, 'complete');
+        setStep(2, 'active');
+
         const payload = {
             event: "appointment.created",
             timestamp: new Date().toISOString(),
@@ -748,72 +836,52 @@
             }
         };
 
-        console.log('Sending payload:', payload);
-
         try {
-            await new Promise(r => setTimeout(r, 300));
-            setFlow(2);
-            
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
 
-            setFlow(3);
-            await new Promise(r => setTimeout(r, 200));
+            setStep(2, 'complete');
+            setStep(3, 'active');
+            await sleep(300);
+            setStep(3, 'complete');
+            setStep(4, 'active');
+            await sleep(200);
+            setStep(4, 'complete');
 
             const resultText = await response.text();
-            console.log('Raw response text:', resultText);
-            
             let parsed = null;
-            
+
             try {
                 parsed = JSON.parse(resultText);
-                console.log('Parsed JSON:', parsed);
-            } catch (parseError) {
-                console.log('Failed to parse as JSON:', parseError);
-            }
+            } catch {}
 
-            setFlow(4);
-
-            if (parsed) {
-                // Extract data handling different n8n formats
-                const data = extractResponseData(parsed);
-                
-                if (data && typeof data === 'object') {
-                    const status = data.status || 'unknown';
-                    const message = data.uiMessage || data.message || '';
-                    const details = {
-                        copay: data.copay,
-                        coverageType: data.coverageType,
-                        notes: data.notes,
-                        issues: data.issues
-                    };
-                    
-                    console.log('Final status:', status);
-                    console.log('Final message:', message);
-                    console.log('Final details:', details);
-                    
-                    showResult(status, message, details);
-                } else {
-                    console.log('Data is not an object, showing as needs_review');
-                    showResult('needs_review', 'Received unexpected response format');
-                }
+            if (parsed && typeof parsed === 'object') {
+                const data = parsed.body || parsed;
+                showResult(
+                    data.status,
+                    data.uiMessage || data.message,
+                    data.copay,
+                    data.aiReasoning || 'Eligibility verified based on payer response.'
+                );
             } else {
-                console.log('No parsed data, showing raw text');
-                showResult('needs_review', resultText || 'No response received');
+                showResult('needs_review', 'Unexpected response format', null, 'Could not parse response.');
             }
 
         } catch (error) {
-            console.error('Fetch error:', error);
-            setFlow(4);
-            showError('Failed to connect: ' + error.message);
+            setStep(4, 'complete');
+            showResult('needs_review', 'Connection error: ' + error.message, null, 'Failed to connect to agent.');
         }
 
         submitBtn.disabled = false;
-        submitBtn.textContent = '📅 Schedule & Check Eligibility';
+        submitBtn.innerHTML = '<span>🚀</span><span>Run Eligibility Check</span>';
     });
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
     </script>
 </body>
 </html>
