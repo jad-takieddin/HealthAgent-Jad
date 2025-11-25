@@ -582,7 +582,6 @@
         document.getElementById('memberId').value = profile.insurance.memberId;
         document.getElementById('groupNumber').value = profile.insurance.groupNumber;
 
-        // Reset result display
         resetResult();
     });
 
@@ -623,13 +622,17 @@
         const messageEl = document.getElementById('resultMessage');
         const detailsEl = document.getElementById('resultDetails');
 
-        // Set class based on status
+        // Normalize status (handle variations)
+        const normalizedStatus = (status || '').toLowerCase().trim();
+        
+        console.log('Showing result with status:', normalizedStatus);
+
         let displayClass = 'result-display ';
-        if (status === 'eligible') {
+        if (normalizedStatus === 'eligible') {
             displayClass += 'eligible';
             icon.textContent = '✅';
             statusEl.textContent = 'Eligible';
-        } else if (status === 'needs_review') {
+        } else if (normalizedStatus === 'needs_review' || normalizedStatus === 'needs review' || normalizedStatus === 'pending') {
             displayClass += 'needs_review';
             icon.textContent = '⚠️';
             statusEl.textContent = 'Needs Review';
@@ -640,13 +643,13 @@
         }
 
         display.className = displayClass;
-        messageEl.textContent = message;
+        messageEl.textContent = message || `Status: ${status}`;
 
         // Show details if available
         if (details && Object.keys(details).length > 0) {
             let detailsHtml = '';
             
-            if (details.copay !== undefined) {
+            if (details.copay !== undefined && details.copay !== null) {
                 detailsHtml += `<div class="detail-row"><span class="detail-label">Copay</span><span class="detail-value">$${details.copay}</span></div>`;
             }
             if (details.coverageType) {
@@ -678,6 +681,37 @@
     }
 
     // ============================================
+    // EXTRACT DATA FROM N8N RESPONSE
+    // n8n can return data in different formats
+    // ============================================
+    function extractResponseData(parsed) {
+        console.log('Raw parsed response:', parsed);
+        
+        let data = parsed;
+        
+        // If it's an array, get the first item
+        if (Array.isArray(parsed)) {
+            console.log('Response is an array, extracting first item');
+            data = parsed[0];
+        }
+        
+        // If it has a 'json' wrapper (n8n format), unwrap it
+        if (data && data.json) {
+            console.log('Response has json wrapper, unwrapping');
+            data = data.json;
+        }
+        
+        // If it's nested in 'data', unwrap it
+        if (data && data.data && typeof data.data === 'object') {
+            console.log('Response has data wrapper, unwrapping');
+            data = data.data;
+        }
+        
+        console.log('Extracted data:', data);
+        return data;
+    }
+
+    // ============================================
     // FORM SUBMISSION
     // ============================================
     document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
@@ -685,13 +719,11 @@
         
         const submitBtn = document.getElementById('submitBtn');
         
-        // Reset and start
         submitBtn.disabled = true;
         submitBtn.textContent = '⏳ Processing...';
         setFlow(1);
         showProcessing();
         
-        // Build payload
         const payload = {
             event: "appointment.created",
             timestamp: new Date().toISOString(),
@@ -716,6 +748,8 @@
             }
         };
 
+        console.log('Sending payload:', payload);
+
         try {
             await new Promise(r => setTimeout(r, 300));
             setFlow(2);
@@ -730,33 +764,51 @@
             await new Promise(r => setTimeout(r, 200));
 
             const resultText = await response.text();
+            console.log('Raw response text:', resultText);
+            
             let parsed = null;
             
             try {
                 parsed = JSON.parse(resultText);
-            } catch {
-                // Not JSON
+                console.log('Parsed JSON:', parsed);
+            } catch (parseError) {
+                console.log('Failed to parse as JSON:', parseError);
             }
 
             setFlow(4);
 
-            if (parsed && typeof parsed === 'object') {
-                const status = parsed.status || 'unknown';
-                const message = parsed.uiMessage || parsed.message || `Status: ${status}`;
-                const details = {
-                    copay: parsed.copay,
-                    coverageType: parsed.coverageType,
-                    notes: parsed.notes,
-                    issues: parsed.issues
-                };
-                showResult(status, message, details);
+            if (parsed) {
+                // Extract data handling different n8n formats
+                const data = extractResponseData(parsed);
+                
+                if (data && typeof data === 'object') {
+                    const status = data.status || 'unknown';
+                    const message = data.uiMessage || data.message || '';
+                    const details = {
+                        copay: data.copay,
+                        coverageType: data.coverageType,
+                        notes: data.notes,
+                        issues: data.issues
+                    };
+                    
+                    console.log('Final status:', status);
+                    console.log('Final message:', message);
+                    console.log('Final details:', details);
+                    
+                    showResult(status, message, details);
+                } else {
+                    console.log('Data is not an object, showing as needs_review');
+                    showResult('needs_review', 'Received unexpected response format');
+                }
             } else {
-                showResult('needs_review', 'Received response but could not parse eligibility status');
+                console.log('No parsed data, showing raw text');
+                showResult('needs_review', resultText || 'No response received');
             }
 
         } catch (error) {
+            console.error('Fetch error:', error);
             setFlow(4);
-            showError('Failed to connect to agent: ' + error.message);
+            showError('Failed to connect: ' + error.message);
         }
 
         submitBtn.disabled = false;
