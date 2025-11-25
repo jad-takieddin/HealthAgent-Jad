@@ -481,7 +481,7 @@
 
             <div class="webhook-config">
                 <h3>⚡ Agent Webhook URL</h3>
-                <input type="text" id="webhookUrl" placeholder="Paste your n8n webhook URL here...">
+                <input type="text" id="webhookUrl" placeholder="https://jado2003.app.n8n.cloud/webhook/eligibility-check">
                 <p class="hint">Paste your n8n Test URL here to connect the form to your agent</p>
             </div>
 
@@ -514,120 +514,121 @@
     </main>
 
     <script>
-        // Set today's date as default for appointment
-        document.getElementById('appointmentDate').valueAsDate = new Date();
+    // 1. Put your n8n PRODUCTION POST URL here
+    const WEBHOOK_URL = "https://jado2003.app.n8n.cloud/webhook/eligibility-check"; // <- replace this
 
-        // Reset status dots
-        function resetStatus() {
-            document.getElementById('status1').className = 'status-dot';
-            document.getElementById('status2').className = 'status-dot';
-            document.getElementById('status3').className = 'status-dot';
-            document.getElementById('flow1').className = 'flow-step';
-            document.getElementById('flow2').className = 'flow-step';
-            document.getElementById('flow3').className = 'flow-step';
-            document.getElementById('flow4').className = 'flow-step';
-        }
+    // Set today's date as default for appointment
+    document.getElementById('appointmentDate').valueAsDate = new Date();
 
-        // Update status
-        function setStatus(num, state) {
-            document.getElementById('status' + num).className = 'status-dot ' + state;
-        }
+    // Reset status dots
+    function resetStatus() {
+        document.getElementById('status1').className = 'status-dot';
+        document.getElementById('status2').className = 'status-dot';
+        document.getElementById('status3').className = 'status-dot';
+        document.getElementById('flow1').className = 'flow-step';
+        document.getElementById('flow2').className = 'flow-step';
+        document.getElementById('flow3').className = 'flow-step';
+        document.getElementById('flow4').className = 'flow-step';
+    }
 
-        // Update flow
-        function setFlow(num) {
-            document.getElementById('flow' + num).className = 'flow-step active';
-        }
+    // Update status
+    function setStatus(num, state) {
+        document.getElementById('status' + num).className = 'status-dot ' + state;
+    }
 
-        // Form submission
-        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const webhookUrl = document.getElementById('webhookUrl').value;
-            if (!webhookUrl) {
-                alert('Please paste your n8n webhook URL first!');
-                return;
+    // Update flow
+    function setFlow(num) {
+        document.getElementById('flow' + num).className = 'flow-step active';
+    }
+
+    // Form submission
+    document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Use the constant webhook URL
+        const webhookUrl = WEBHOOK_URL;
+
+        const submitBtn = document.getElementById('submitBtn');
+        const responseContent = document.getElementById('responseContent');
+        
+        // Reset and start
+        resetStatus();
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Processing...';
+        responseContent.className = 'response-content';
+        
+        // Build payload
+        const payload = {
+            event: "appointment.created",
+            timestamp: new Date().toISOString(),
+            appointmentId: "APT-" + Date.now(),
+            student: {
+                firstName: document.getElementById('studentFirstName').value,
+                lastName: document.getElementById('studentLastName').value,
+                dateOfBirth: document.getElementById('studentDOB').value,
+                schoolDistrict: document.getElementById('schoolDistrict').value
+            },
+            appointment: {
+                type: document.getElementById('appointmentType').value,
+                requestedDate: document.getElementById('appointmentDate').value
+            },
+            insurance: {
+                provider: document.getElementById('insuranceProvider').value,
+                planType: document.getElementById('planType').value,
+                subscriberName: document.getElementById('subscriberName').value,
+                subscriberDOB: document.getElementById('subscriberDOB').value,
+                memberId: document.getElementById('memberId').value,
+                groupNumber: document.getElementById('groupNumber').value
             }
+        };
 
-            const submitBtn = document.getElementById('submitBtn');
-            const responseContent = document.getElementById('responseContent');
+        // Status 1: Form submitted
+        setStatus(1, 'success');
+        setFlow(1);
+        responseContent.textContent = '// Payload sent to agent:\n' + JSON.stringify(payload, null, 2);
+
+        try {
+            // Status 2: Sending to agent
+            await new Promise(r => setTimeout(r, 300));
+            setStatus(2, 'pending');
+            setFlow(2);
             
-            // Reset and start
-            resetStatus();
-            submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Processing...';
-            responseContent.className = 'response-content';
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            setStatus(2, 'success');
+            setFlow(3);
+            setStatus(3, 'pending');
+
+            const result = await response.text();
+            let displayResult;
             
-            // Build payload
-            const payload = {
-                event: "appointment.created",
-                timestamp: new Date().toISOString(),
-                appointmentId: "APT-" + Date.now(),
-                student: {
-                    firstName: document.getElementById('studentFirstName').value,
-                    lastName: document.getElementById('studentLastName').value,
-                    dateOfBirth: document.getElementById('studentDOB').value,
-                    schoolDistrict: document.getElementById('schoolDistrict').value
-                },
-                appointment: {
-                    type: document.getElementById('appointmentType').value,
-                    requestedDate: document.getElementById('appointmentDate').value
-                },
-                insurance: {
-                    provider: document.getElementById('insuranceProvider').value,
-                    planType: document.getElementById('planType').value,
-                    subscriberName: document.getElementById('subscriberName').value,
-                    subscriberDOB: document.getElementById('subscriberDOB').value,
-                    memberId: document.getElementById('memberId').value,
-                    groupNumber: document.getElementById('groupNumber').value
-                }
-            };
-
-            // Status 1: Form submitted
-            setStatus(1, 'success');
-            setFlow(1);
-            responseContent.textContent = '// Payload sent to agent:\n' + JSON.stringify(payload, null, 2);
-
             try {
-                // Status 2: Sending to agent
-                await new Promise(r => setTimeout(r, 300));
-                setStatus(2, 'pending');
-                setFlow(2);
-                
-                const response = await fetch(webhookUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                setStatus(2, 'success');
-                setFlow(3);
-                setStatus(3, 'pending');
-
-                const result = await response.text();
-                let displayResult;
-                
-                try {
-                    displayResult = JSON.stringify(JSON.parse(result), null, 2);
-                } catch {
-                    displayResult = result;
-                }
-
-                setStatus(3, 'success');
-                setFlow(4);
-                responseContent.textContent = '// Agent Response:\n' + displayResult;
-                responseContent.className = 'response-content success';
-
-            } catch (error) {
-                setStatus(2, 'error');
-                responseContent.textContent = '// Error:\n' + error.message + '\n\n// Make sure:\n// 1. Your n8n webhook is running\n// 2. You clicked "Listen for test event" in n8n\n// 3. The URL is correct';
-                responseContent.className = 'response-content error';
+                displayResult = JSON.stringify(JSON.parse(result), null, 2);
+            } catch {
+                displayResult = result;
             }
 
-            submitBtn.disabled = false;
-            submitBtn.textContent = '📅 Schedule & Check Eligibility';
-        });
-    </script>
+            setStatus(3, 'success');
+            setFlow(4);
+            responseContent.textContent = '// Agent Response:\n' + displayResult;
+            responseContent.className = 'response-content success';
+
+        } catch (error) {
+            setStatus(2, 'error');
+            responseContent.textContent = '// Error:\n' + error.message + '\n\n// Make sure:\n// 1. Your n8n webhook is running\n// 2. The URL is correct\n// 3. CORS is configured if needed';
+            responseContent.className = 'response-content error';
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📅 Schedule & Check Eligibility';
+    });
+</script>
+
 </body>
 </html>
