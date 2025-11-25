@@ -183,44 +183,6 @@
             gap: 24px;
         }
 
-        .webhook-config {
-            background: white;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-        }
-
-        .webhook-config h3 {
-            font-size: 14px;
-            color: #5B3CC4;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .webhook-config input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 12px;
-            font-family: monospace;
-        }
-
-        .webhook-config input:focus {
-            outline: none;
-            border-color: #7C5CE7;
-            box-shadow: 0 0 0 3px rgba(124, 92, 231, 0.15);
-        }
-
-        .webhook-config .hint {
-            font-size: 11px;
-            color: #888;
-            margin-top: 8px;
-        }
-
-        /* Status Panel */
         .status-panel {
             background: white;
             border-radius: 16px;
@@ -358,6 +320,11 @@
             color: white;
             border-color: #5B3CC4;
         }
+
+        /* Eligibility banner */
+        #eligibilityBanner {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -382,6 +349,17 @@
             <p class="subtitle">Enter student and insurance information to schedule a telehealth appointment</p>
             
             <form id="appointmentForm" class="form-grid">
+                <!-- Existing Student Selector -->
+                <div class="form-group full-width">
+                    <label>Existing Student (optional)</label>
+                    <select id="studentPreset">
+                        <option value="">Select a student...</option>
+                        <option value="emma_johnson">Emma Johnson – Oakland USD</option>
+                        <option value="li_wong">Li Wong – SF Unified</option>
+                        <option value="jayden_smith">Jayden Smith – LA Unified</option>
+                    </select>
+                </div>
+
                 <!-- Student Information -->
                 <div class="form-group">
                     <label>Student First Name *</label>
@@ -459,6 +437,19 @@
                     <input type="text" id="groupNumber" value="GRP8899">
                 </div>
 
+                <!-- Eligibility result banner -->
+                <div class="form-group full-width" id="eligibilityBanner" style="margin-top: 8px; display:none;">
+                    <div id="eligibilityText" style="
+                        padding: 10px 14px;
+                        border-radius: 8px;
+                        font-size: 13px;
+                        background: #f3f4ff;
+                        color: #111827;
+                    ">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
                 <button type="submit" class="submit-btn" id="submitBtn">
                     📅 Schedule & Check Eligibility
                 </button>
@@ -478,7 +469,6 @@
                     <span class="flow-step" id="flow4">Result</span>
                 </div>
             </div>
-
 
             <div class="status-panel">
                 <h3>📊 Request Status</h3>
@@ -510,7 +500,80 @@
 
     <script>
     // 1. Put your n8n PRODUCTION POST URL here
-    const WEBHOOK_URL = "https://jado2003.app.n8n.cloud/webhook/eligibility-check"; // <- replace this
+    const WEBHOOK_URL = "https://jado2003.app.n8n.cloud/webhook/eligibility-check";
+
+    // Hardcoded "students" to simulate Hazel's DB
+    const STUDENT_PROFILES = {
+      emma_johnson: {
+        student: {
+          firstName: "Emma",
+          lastName: "Johnson",
+          dateOfBirth: "2012-03-15",
+          schoolDistrict: "oakland-usd",
+        },
+        insurance: {
+          provider: "bcbs",
+          planType: "ppo",
+          subscriberName: "Michael Johnson",
+          subscriberDOB: "1980-07-22",
+          memberId: "XYZ123456789",
+          groupNumber: "GRP8899",
+        }
+      },
+      li_wong: {
+        student: {
+          firstName: "Li",
+          lastName: "Wong",
+          dateOfBirth: "2011-09-02",
+          schoolDistrict: "sf-unified",
+        },
+        insurance: {
+          provider: "medicaid",
+          planType: "hmo",
+          subscriberName: "Jia Wong",
+          subscriberDOB: "1983-02-11",
+          memberId: "MED123456",
+          groupNumber: "",
+        }
+      },
+      jayden_smith: {
+        student: {
+          firstName: "Jayden",
+          lastName: "Smith",
+          dateOfBirth: "2010-01-20",
+          schoolDistrict: "la-unified",
+        },
+        insurance: {
+          provider: "aetna",
+          planType: "ppo",
+          subscriberName: "Carla Smith",
+          subscriberDOB: "1985-05-10",
+          memberId: "AET998877",
+          groupNumber: "GRP5544",
+        }
+      }
+    };
+
+    // When user selects an existing student, auto-fill fields
+    document.getElementById('studentPreset').addEventListener('change', (e) => {
+      const key = e.target.value;
+      if (!key) return;
+      const profile = STUDENT_PROFILES[key];
+
+      // Student fields
+      document.getElementById('studentFirstName').value = profile.student.firstName;
+      document.getElementById('studentLastName').value = profile.student.lastName;
+      document.getElementById('studentDOB').value = profile.student.dateOfBirth;
+      document.getElementById('schoolDistrict').value = profile.student.schoolDistrict;
+
+      // Insurance fields
+      document.getElementById('insuranceProvider').value = profile.insurance.provider;
+      document.getElementById('planType').value = profile.insurance.planType;
+      document.getElementById('subscriberName').value = profile.insurance.subscriberName;
+      document.getElementById('subscriberDOB').value = profile.insurance.subscriberDOB;
+      document.getElementById('memberId').value = profile.insurance.memberId;
+      document.getElementById('groupNumber').value = profile.insurance.groupNumber;
+    });
 
     // Set today's date as default for appointment
     document.getElementById('appointmentDate').valueAsDate = new Date();
@@ -524,6 +587,10 @@
         document.getElementById('flow2').className = 'flow-step';
         document.getElementById('flow3').className = 'flow-step';
         document.getElementById('flow4').className = 'flow-step';
+
+        // hide eligibility banner
+        const banner = document.getElementById('eligibilityBanner');
+        banner.style.display = 'none';
     }
 
     // Update status
@@ -545,6 +612,8 @@
 
         const submitBtn = document.getElementById('submitBtn');
         const responseContent = document.getElementById('responseContent');
+        const banner = document.getElementById('eligibilityBanner');
+        const bannerText = document.getElementById('eligibilityText');
         
         // Reset and start
         resetStatus();
@@ -600,19 +669,42 @@
             setFlow(3);
             setStatus(3, 'pending');
 
-            const result = await response.text();
+            const resultText = await response.text();
+            let result;
             let displayResult;
-            
+
             try {
-                displayResult = JSON.stringify(JSON.parse(result), null, 2);
+                result = JSON.parse(resultText);
+                displayResult = JSON.stringify(result, null, 2);
             } catch {
-                displayResult = result;
+                result = null;
+                displayResult = resultText;
             }
 
             setStatus(3, 'success');
             setFlow(4);
             responseContent.textContent = '// Agent Response:\n' + displayResult;
             responseContent.className = 'response-content success';
+
+            // Show eligibility banner if structured response
+            if (result && result.status) {
+                banner.style.display = 'block';
+                const status = result.status;
+                const msg = result.uiMessage || '';
+
+                bannerText.textContent = msg || `Status: ${status}`;
+
+                if (status === 'eligible') {
+                    bannerText.style.background = '#ecfdf3';
+                    bannerText.style.color = '#166534';
+                } else if (status === 'needs_review') {
+                    bannerText.style.background = '#fffbeb';
+                    bannerText.style.color = '#92400e';
+                } else { // not_eligible or anything else
+                    bannerText.style.background = '#fef2f2';
+                    bannerText.style.color = '#b91c1c';
+                }
+            }
 
         } catch (error) {
             setStatus(2, 'error');
@@ -623,7 +715,7 @@
         submitBtn.disabled = false;
         submitBtn.textContent = '📅 Schedule & Check Eligibility';
     });
-</script>
+    </script>
 
 </body>
 </html>
