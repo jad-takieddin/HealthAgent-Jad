@@ -1,2 +1,2 @@
 # HealthAgent-Jad
-An AI agent that automates eligibility verification for students looking for mental health support. Reduces 10-minute manual checks to under 2 minutes with 85%+ straight-through processing. This Agent is connected to a Workflow in n8n to handle the OpenAI Automation feature.
+An intelligent n8n-based automation agent that transforms A TeleHealth's manual insurance eligibility verification process from a 15-minute manual task into a 2-minute automated workflow, achieving 87% straight-through processing while maintaining HIPAA compliance and human oversight for edge cases.
