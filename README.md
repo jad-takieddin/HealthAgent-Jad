@@ -6,9 +6,7 @@ An intelligent n8n-based automation agent that transforms TeleHealth's manual in
 
 - Healthcare staff waste hours daily re-typing patient insurance data into multiple payer portals to verify coverage, causing appointment delays and errors.
 
-💡 Solution
-
-An intelligent agent that:
+💡 Solution - An intelligent agent that:
 
 - Automatically fetches patient data and routes to correct payer API
 - Interprets complex eligibility responses using AI
