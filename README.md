@@ -2,8 +2,6 @@ HealthAgent-Jad
 
 https://jad-takieddin.github.io/HealthAgent-Jad/
 
-https://jado2003.app.n8n.cloud/workflow/eUsUmZGry74gDBYa
-
 An intelligent n8n-based automation agent that transforms TeleHealth's manual insurance eligibility verification process from a 15-minute manual task into a 2-minute automated workflow, achieving 87% straight-through processing while maintaining HIPAA compliance and human oversight for edge cases.
 
 🎯 Problem
